@@ -1,51 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.receiveData = exports.insertData = exports.createTable = exports.createDbConnection = void 0;
+exports.receiveData = exports.insertData = exports.createDbConnection = void 0;
 const sqlite3 = require("sqlite3").verbose();
-const filepath = "./db/school.db";
+const filePath = "./db/school.db";
 let db = null;
 const createDbConnection = () => {
-    db = new sqlite3.Database(filepath, (error) => {
+    db = new sqlite3.Database(filePath, (error) => {
         if (error) {
             return console.error(error.message);
         }
-        createTable();
     });
-    console.log("Connection with SQLite has been established");
+    console.log("Connection with SQLite has been estabilished");
+    createTable();
     return db;
 };
 exports.createDbConnection = createDbConnection;
 const createTable = () => {
-    db.exec(`
-    CREATE TABLE IF NOT EXISTS students
-    (
-      ID INTEGER PRIMARY KEY AUTOINCREMENT,
-      name   VARCHAR(50) NOT NULL,
-      shift   VARCHAR(50) NOT NULL,
-      year VARCHAR(50) NOT NULL,
-      room VARCHAR(50) NOT NULL
-    );
-  `);
+    db.exec(`CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name VARCHAR(50),
+            shift VARCHAR(50),
+            year VARCHAR(50),
+            room VARCHAR(50)
+     );
+    `);
 };
-exports.createTable = createTable;
-const insertData = (student) => {
-    db.run(`INSERT INTO students (name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${student.room}")`, function (error) {
+const insertData = () => {
+    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("Ronaldo", "manhã", "8", "A")`;
+    db.run(sql, (error) => {
         if (error) {
-            console.error(error.message);
+            return console.error(error.message);
         }
-        console.log(`Student added`);
+        console.log("Student Added");
     });
 };
 exports.insertData = insertData;
 const receiveData = () => {
-    let sql = "Select * from students";
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            throw err;
+    let sql = `SELECT * FROM students`;
+    db.all(sql, [], (error, rows) => {
+        if (error) {
+            return console.error(error.message);
         }
-        rows.forEach((row) => {
-            console.log(row);
-        });
+        rows.forEach((row) => { console.log(row); });
     });
 };
 exports.receiveData = receiveData;

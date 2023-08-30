@@ -10,11 +10,11 @@ const cors_1 = __importDefault(require("cors"));
 const dbConfig_1 = require("../db/dbConfig");
 dotenv_1.default.config();
 (0, dbConfig_1.createDbConnection)();
+(0, dbConfig_1.insertData)();
+(0, dbConfig_1.receiveData)();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use((0, cors_1.default)());
-app.use(express_1.default.urlencoded({ extended: false }));
-app.use(express_1.default.json());
 app.get("/", (req, res) => {
     res.send("<h3 style='color: blue'>Hello World</h3>");
 });

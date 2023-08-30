@@ -2,18 +2,17 @@ import express from "express";
 import dotenv from "dotenv";
 import studentsRouter from "../routes/studentsRouter";
 import cors from "cors";
-import { createDbConnection } from "../db/dbConfig";
+import { createDbConnection, insertData, receiveData } from "../db/dbConfig";
 
 dotenv.config();
 
 createDbConnection();
+insertData();
+receiveData();
 
 const app = express();
 const port = process.env.PORT;
 app.use(cors());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
 
 
 
