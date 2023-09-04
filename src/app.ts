@@ -6,8 +6,6 @@ import { createDbConnection } from "../db/dbConfig";
 
 dotenv.config();
 
-createDbConnection();
-
 const app = express();
 const port = process.env.PORT;
 app.use(cors());

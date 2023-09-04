@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
     studentsRoot,
     studentsList,
+    studentDetailsByQuery,
+    studentDetailsByParams,
     addStudent,
     updateStudent,
     deleteStudent
@@ -13,6 +15,10 @@ const studentsRouter = Router();
 studentsRouter.get("/", studentsRoot);
 
 studentsRouter.get("/studentsList", studentsList);
+
+studentsRouter.get("/studentDetails/", studentDetailsByQuery);
+
+studentsRouter.get("/studentDetails/:id", studentDetailsByParams);
 
 studentsRouter.post("/addStudent", addStudent);
 
