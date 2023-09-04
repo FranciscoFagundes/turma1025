@@ -1,4 +1,7 @@
 
+import { sqlite3 } from "sqlite3";
+import Student from "../models/Student";
+
 const sqlite3 = require("sqlite3").verbose();
 const filePath = "./db/school.db";
 
@@ -26,9 +29,9 @@ const createTable = () => {
     `);
 }
 
-const insertData = () => {
+const insertStudent = (student: Student) => {
 
-    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("Ronaldo", "manhã", "8", "A")`;
+    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${student.room}")`;
 
     db.run(sql,
         (error: any) => {
@@ -39,18 +42,19 @@ const insertData = () => {
         })
 }
 
-const receiveData = () => {
+const receiveStudentsList = () => {
     let sql = `SELECT * FROM students`;
+    let studentsList: any = [];
 
     db.all(sql, [], (error: any, rows: any) => {
         if (error) {
             return console.error(error.message);
         }
-        rows.forEach((row: any) => { console.log(row) });
+        rows.forEach((row: any) => { studentsList.push(row) });
+        return studentsList;
     }
     );
-
-
+    
 }
 
-export { createDbConnection, insertData, receiveData }
+export { createDbConnection, insertStudent, receiveStudentsList }
