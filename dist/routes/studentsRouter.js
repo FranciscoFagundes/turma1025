@@ -5,6 +5,7 @@ const studentsController_1 = require("../controllers/studentsController");
 const studentsRouter = (0, express_1.Router)();
 studentsRouter.get("/", studentsController_1.studentsRoot);
 studentsRouter.get("/studentsList", studentsController_1.studentsList);
+studentsRouter.get("/studentsListByYearAndRoom/:year/:room", studentsController_1.studentsListByYearAndRoom);
 studentsRouter.get("/studentDetails/", studentsController_1.studentDetailsByQuery);
 studentsRouter.get("/studentDetails/:id", studentsController_1.studentDetailsByParams);
 studentsRouter.post("/addStudent", studentsController_1.addStudent);

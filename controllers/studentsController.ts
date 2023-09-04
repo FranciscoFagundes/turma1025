@@ -10,7 +10,7 @@ const studentsRoot = (req: Request, res: Response) => {
 }
 
 const studentsList = (req: Request, res: Response) => {
-    
+
     let studentsList: any = [];
 
     let sql = `SELECT * FROM students`;
@@ -25,20 +25,43 @@ const studentsList = (req: Request, res: Response) => {
     );
 }
 
-const studentDetailsByQuery = (req: Request, res: Response) => {
-    let id: any = req.query.id;
-    let sql = `SELECT * FROM students WHERE id="${id}"`;
-    
+const studentsListByYearAndRoom = (req: Request, res: Response) => {
+    let studentsList: any = [];
+    let year = req.query.year;
+    let room = req.query.room?.toString().toUpperCase();
+
+    let sql = `SELECT * FROM students WHERE year="${year}" AND room="${room}"`;
+
     db.all(sql, [], (error: any, rows: any) => {
         if (error) {
             res.send(error.message);
         }
-        if(rows.length > 0){
+        if (rows.length > 0) {
+            rows.forEach((row: any) => { studentsList.push(row) });
+            res.send(studentsList);
+        } else {
+            res.send("Os parâmetros apresentados não rertonaram resultado.");
+        }
+
+    })
+}
+
+
+
+const studentDetailsByQuery = (req: Request, res: Response) => {
+    let id: any = req.query.id;
+    let sql = `SELECT * FROM students WHERE id="${id}"`;
+
+    db.all(sql, [], (error: any, rows: any) => {
+        if (error) {
+            res.send(error.message);
+        }
+        if (rows.length > 0) {
             res.send(rows[0]);
         } else {
             res.send("Estudante não existe");
         }
-        
+
     }
     );
 }
@@ -46,17 +69,17 @@ const studentDetailsByQuery = (req: Request, res: Response) => {
 const studentDetailsByParams = (req: Request, res: Response) => {
     let id: any = req.params.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
-    
+
     db.all(sql, [], (error: any, rows: any) => {
         if (error) {
             res.send(error.message);
         }
-        if(rows.length > 0){
+        if (rows.length > 0) {
             res.send(rows[0]);
         } else {
             res.send("Estudante não existe");
         }
-        
+
     }
     );
 }
@@ -66,18 +89,18 @@ const addStudent = (req: Request, res: Response) => {
     let student: Student = req.body;
     let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${student.room}")`;
 
-    if(student.name && student.shift && student.year && student.room){
+    if (student.name && student.shift && student.year && student.room) {
         db.run(sql,
             (error: any) => {
                 if (error) {
-                   res.end(error.message);
+                    res.end(error.message);
                 }
                 res.send(`Student ${student.name} Added`);
             })
     } else {
         res.send("Erro na criação do estudante. Verifique se todos os campos foram preenchidos");
     }
-   
+
 }
 
 const updateStudent = (req: Request, res: Response) => {
@@ -88,4 +111,4 @@ const deleteStudent = (req: Request, res: Response) => {
     res.send("Student Deleted");
 }
 
-export { studentsRoot, studentsList, studentDetailsByQuery, studentDetailsByParams, addStudent, updateStudent, deleteStudent };
+export { studentsRoot, studentsList, studentsListByYearAndRoom, studentDetailsByQuery, studentDetailsByParams, addStudent, updateStudent, deleteStudent };

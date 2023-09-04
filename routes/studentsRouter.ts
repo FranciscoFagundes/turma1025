@@ -6,7 +6,8 @@ import {
     studentDetailsByParams,
     addStudent,
     updateStudent,
-    deleteStudent
+    deleteStudent,
+    studentsListByYearAndRoom
 } from "../controllers/studentsController";
 
 
@@ -15,6 +16,8 @@ const studentsRouter = Router();
 studentsRouter.get("/", studentsRoot);
 
 studentsRouter.get("/studentsList", studentsList);
+
+studentsRouter.get("/studentsListByYearAndRoom", studentsListByYearAndRoom);
 
 studentsRouter.get("/studentDetails/", studentDetailsByQuery);
 

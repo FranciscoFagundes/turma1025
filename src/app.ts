@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import studentsRouter from "../routes/studentsRouter";
 import cors from "cors";
-import { createDbConnection } from "../db/dbConfig";
 
 dotenv.config();
 

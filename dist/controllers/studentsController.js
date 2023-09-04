@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStudent = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsList = exports.studentsRoot = void 0;
+exports.deleteStudent = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
 const dbConfig_1 = require("../db/dbConfig");
 let db = (0, dbConfig_1.createDbConnection)();
 const studentsRoot = (req, res) => {
@@ -19,6 +19,27 @@ const studentsList = (req, res) => {
     });
 };
 exports.studentsList = studentsList;
+const studentsListByYearAndRoom = (req, res) => {
+    let studentsList = [];
+    // let year = req.query.year;
+    // let room = req.query.room?.toString().toUpperCase();
+    let year = req.params.year;
+    let room = req.params.room;
+    let sql = `SELECT * FROM students WHERE year="${year}" AND room="${room}"`;
+    db.all(sql, [], (error, rows) => {
+        if (error) {
+            res.send(error.message);
+        }
+        if (rows.length > 0) {
+            rows.forEach((row) => { studentsList.push(row); });
+            res.send(studentsList);
+        }
+        else {
+            res.send("Os parâmetros apresentados não rertonaram resultado.");
+        }
+    });
+};
+exports.studentsListByYearAndRoom = studentsListByYearAndRoom;
 const studentDetailsByQuery = (req, res) => {
     let id = req.query.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
