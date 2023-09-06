@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStudentByParams = exports.deleteStudentByQuery = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
+exports.deleteStudentByParams = exports.deleteStudentByQuery = exports.updateStudentBySpecificField = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
 const dbConfig_1 = require("../db/dbConfig");
 let db = (0, dbConfig_1.createDbConnection)();
 const studentsRoot = (req, res) => {
@@ -105,6 +105,19 @@ const updateStudent = (req, res) => {
     });
 };
 exports.updateStudent = updateStudent;
+const updateStudentBySpecificField = (req, res) => {
+    let student = req.body;
+    let sql = `UPDATE students SET name="${student.name}"
+                                   WHERE id="${student.id}"
+    `;
+    db.all(sql, [], (error) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Updated");
+    });
+};
+exports.updateStudentBySpecificField = updateStudentBySpecificField;
 const deleteStudentByQuery = (req, res) => {
     let id = req.query.id;
     let sql = `DELETE from students WHERE id="${id}"`;

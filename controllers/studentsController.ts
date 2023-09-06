@@ -1,9 +1,10 @@
 import { Response, Request } from "express";
 import Student from "../models/Student";
 import { createDbConnection } from "../db/dbConfig";
+import { Database } from "sqlite3";
 
 
-let db = createDbConnection();
+let db: Database = createDbConnection();
 
 const studentsRoot = (req: Request, res: Response) => {
     res.send("Página Inicial Students");
@@ -11,33 +12,33 @@ const studentsRoot = (req: Request, res: Response) => {
 
 const studentsList = (req: Request, res: Response) => {
 
-    let studentsList: any = [];
+    let studentsList: Student[] = [];
 
     let sql = `SELECT * FROM students`;
 
-    db.all(sql, [], (error: any, rows: any) => {
+    db.all(sql, [], (error: Error, rows: Student[]) => {
         if (error) {
             res.send(error.message);
         }
-        rows.forEach((row: any) => { studentsList.push(row) });
+        rows.forEach((row: Student) => { studentsList.push(row) });
         res.send(studentsList);
     }
     );
 }
 
 const studentsListByYearAndRoom = (req: Request, res: Response) => {
-    let studentsList: any = [];
+    let studentsList: Student[] = [];
     let year = req.query.year;
     let room = req.query.room?.toString().toUpperCase();
 
     let sql = `SELECT * FROM students WHERE year="${year}" AND room="${room}"`;
 
-    db.all(sql, [], (error: any, rows: any) => {
+    db.all(sql, [], (error: Error, rows: Student[]) => {
         if (error) {
             res.send(error.message);
         }
         if (rows.length > 0) {
-            rows.forEach((row: any) => { studentsList.push(row) });
+            rows.forEach((row: Student) => { studentsList.push(row) });
             res.send(studentsList);
         } else {
             res.send("Os parâmetros apresentados não rertonaram resultado.");
@@ -47,12 +48,11 @@ const studentsListByYearAndRoom = (req: Request, res: Response) => {
 }
 
 
-
 const studentDetailsByQuery = (req: Request, res: Response) => {
-    let id: any = req.query.id;
+    let id = req.query.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
 
-    db.all(sql, [], (error: any, rows: any) => {
+    db.all(sql, [], (error: Error, rows: Student[]) => {
         if (error) {
             res.send(error.message);
         }
@@ -67,10 +67,10 @@ const studentDetailsByQuery = (req: Request, res: Response) => {
 }
 
 const studentDetailsByParams = (req: Request, res: Response) => {
-    let id: any = req.params.id;
+    let id = req.params.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
 
-    db.all(sql, [], (error: any, rows: any) => {
+    db.all(sql, [], (error: Error, rows: Student[]) => {
         if (error) {
             res.send(error.message);
         }
@@ -93,7 +93,7 @@ const addStudent = (req: Request, res: Response) => {
 
     if (student.name && student.shift && student.year && student.room) {
         db.run(sql,
-            (error: any) => {
+            (error: Error) => {
                 if (error) {
                     res.end(error.message);
                 }
@@ -116,7 +116,7 @@ const updateStudent = (req: Request, res: Response) => {
                                    `;
 
 
-    db.all(sql, [], (error: any) => {
+    db.all(sql, [], (error: Error) => {
         if (error) {
             res.send(error.message);
         }
@@ -124,11 +124,24 @@ const updateStudent = (req: Request, res: Response) => {
     });
 }
 
+const updateStudentBySpecificField = (req: Request, res: Response) => {
+    let student: Student = req.body;
+    let sql = `UPDATE students SET name="${student.name}"
+                                   WHERE id="${student.id}"
+    `
+    db.all(sql, [], (error: Error) => {
+        if(error){
+            res.send(error.message);
+        }
+        res.send("Student Updated");
+    })
+}
+
 const deleteStudentByQuery = (req: Request, res: Response) => {
-    let id: any = req.query.id;
+    let id = req.query.id;
     let sql = `DELETE from students WHERE id="${id}"`;
 
-    db.all(sql, [], (error: any) => {
+    db.all(sql, [], (error: Error) => {
         if (error) {
             res.send(error.message);
         }
@@ -137,10 +150,10 @@ const deleteStudentByQuery = (req: Request, res: Response) => {
 }
 
 const deleteStudentByParams = (req: Request, res: Response) => {
-    let id: any = req.params.id;
+    let id = req.params.id;
     let sql = `DELETE from students WHERE id="${id}"`;
 
-    db.all(sql, [], (error: any) => {
+    db.all(sql, [], (error: Error) => {
         if (error) {
             res.send(error.message);
         }
@@ -157,7 +170,8 @@ export {
     studentDetailsByQuery, 
     studentDetailsByParams, 
     addStudent, 
-    updateStudent, 
+    updateStudent,
+    updateStudentBySpecificField,
     deleteStudentByQuery, 
     deleteStudentByParams
 };

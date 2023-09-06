@@ -8,7 +8,8 @@ import {
     addStudent,
     updateStudent,
     deleteStudentByQuery,
-    deleteStudentByParams
+    deleteStudentByParams,
+    updateStudentBySpecificField
 } from "../controllers/studentsController";
 
 
@@ -27,6 +28,8 @@ studentsRouter.get("/studentDetails/:id", studentDetailsByParams);
 studentsRouter.post("/addStudent", addStudent);
 
 studentsRouter.put("/updateStudent", updateStudent);
+
+studentsRouter.patch("/updateStudentBySpecificField", updateStudentBySpecificField);
 
 studentsRouter.delete("/deleteStudent", deleteStudentByQuery);
 

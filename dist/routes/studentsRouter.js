@@ -10,6 +10,7 @@ studentsRouter.get("/studentDetails/", studentsController_1.studentDetailsByQuer
 studentsRouter.get("/studentDetails/:id", studentsController_1.studentDetailsByParams);
 studentsRouter.post("/addStudent", studentsController_1.addStudent);
 studentsRouter.put("/updateStudent", studentsController_1.updateStudent);
+studentsRouter.patch("/updateStudentBySpecificField", studentsController_1.updateStudentBySpecificField);
 studentsRouter.delete("/deleteStudent", studentsController_1.deleteStudentByQuery);
 studentsRouter.delete("/deleteStudent/:id", studentsController_1.deleteStudentByParams);
 exports.default = studentsRouter;
