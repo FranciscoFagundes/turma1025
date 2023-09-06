@@ -87,7 +87,9 @@ const studentDetailsByParams = (req: Request, res: Response) => {
 const addStudent = (req: Request, res: Response) => {
 
     let student: Student = req.body;
-    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${student.room}")`;
+    let roomToUppercase: string = student.room.toUpperCase();
+
+    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${roomToUppercase}")`;
 
     if (student.name && student.shift && student.year && student.room) {
         db.run(sql,
@@ -104,11 +106,58 @@ const addStudent = (req: Request, res: Response) => {
 }
 
 const updateStudent = (req: Request, res: Response) => {
-    res.send("Student Updated");
+    let student: Student = req.body;
+    let roomToUppercase = student.room.toUpperCase();
+    let sql = `UPDATE students SET name="${student.name}", 
+                                   shift="${student.shift}", 
+                                   year="${student.year}",
+                                   room="${roomToUppercase}"
+                                   WHERE id="${student.id}"
+                                   `;
+
+
+    db.all(sql, [], (error: any) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Updated");
+    });
 }
 
-const deleteStudent = (req: Request, res: Response) => {
-    res.send("Student Deleted");
+const deleteStudentByQuery = (req: Request, res: Response) => {
+    let id: any = req.query.id;
+    let sql = `DELETE from students WHERE id="${id}"`;
+
+    db.all(sql, [], (error: any) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Deleted");
+    })
 }
 
-export { studentsRoot, studentsList, studentsListByYearAndRoom, studentDetailsByQuery, studentDetailsByParams, addStudent, updateStudent, deleteStudent };
+const deleteStudentByParams = (req: Request, res: Response) => {
+    let id: any = req.params.id;
+    let sql = `DELETE from students WHERE id="${id}"`;
+
+    db.all(sql, [], (error: any) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Deleted");
+    })
+}
+
+
+
+export {
+    studentsRoot,
+    studentsList,
+    studentsListByYearAndRoom,
+    studentDetailsByQuery, 
+    studentDetailsByParams, 
+    addStudent, 
+    updateStudent, 
+    deleteStudentByQuery, 
+    deleteStudentByParams
+};

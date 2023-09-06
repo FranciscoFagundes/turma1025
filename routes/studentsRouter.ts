@@ -2,12 +2,13 @@ import { Router } from "express";
 import {
     studentsRoot,
     studentsList,
+    studentsListByYearAndRoom,
     studentDetailsByQuery,
     studentDetailsByParams,
     addStudent,
     updateStudent,
-    deleteStudent,
-    studentsListByYearAndRoom
+    deleteStudentByQuery,
+    deleteStudentByParams
 } from "../controllers/studentsController";
 
 
@@ -27,7 +28,9 @@ studentsRouter.post("/addStudent", addStudent);
 
 studentsRouter.put("/updateStudent", updateStudent);
 
-studentsRouter.delete("/deleteStudent", deleteStudent);
+studentsRouter.delete("/deleteStudent", deleteStudentByQuery);
+
+studentsRouter.delete("/deleteStudent/:id", deleteStudentByParams);
 
 
 

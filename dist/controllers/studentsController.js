@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteStudent = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
+exports.deleteStudentByParams = exports.deleteStudentByQuery = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
 const dbConfig_1 = require("../db/dbConfig");
 let db = (0, dbConfig_1.createDbConnection)();
 const studentsRoot = (req, res) => {
@@ -20,11 +20,10 @@ const studentsList = (req, res) => {
 };
 exports.studentsList = studentsList;
 const studentsListByYearAndRoom = (req, res) => {
+    var _a;
     let studentsList = [];
-    // let year = req.query.year;
-    // let room = req.query.room?.toString().toUpperCase();
-    let year = req.params.year;
-    let room = req.params.room;
+    let year = req.query.year;
+    let room = (_a = req.query.room) === null || _a === void 0 ? void 0 : _a.toString().toUpperCase();
     let sql = `SELECT * FROM students WHERE year="${year}" AND room="${room}"`;
     db.all(sql, [], (error, rows) => {
         if (error) {
@@ -74,7 +73,8 @@ const studentDetailsByParams = (req, res) => {
 exports.studentDetailsByParams = studentDetailsByParams;
 const addStudent = (req, res) => {
     let student = req.body;
-    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${student.room}")`;
+    let roomToUppercase = student.room.toUpperCase();
+    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${roomToUppercase}")`;
     if (student.name && student.shift && student.year && student.room) {
         db.run(sql, (error) => {
             if (error) {
@@ -89,10 +89,41 @@ const addStudent = (req, res) => {
 };
 exports.addStudent = addStudent;
 const updateStudent = (req, res) => {
-    res.send("Student Updated");
+    let student = req.body;
+    let roomToUppercase = student.room.toUpperCase();
+    let sql = `UPDATE students SET name="${student.name}", 
+                                   shift="${student.shift}", 
+                                   year="${student.year}",
+                                   room="${roomToUppercase}"
+                                   WHERE id="${student.id}"
+                                   `;
+    db.all(sql, [], (error) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Updated");
+    });
 };
 exports.updateStudent = updateStudent;
-const deleteStudent = (req, res) => {
-    res.send("Student Deleted");
+const deleteStudentByQuery = (req, res) => {
+    let id = req.query.id;
+    let sql = `DELETE from students WHERE id="${id}"`;
+    db.all(sql, [], (error) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Deleted");
+    });
 };
-exports.deleteStudent = deleteStudent;
+exports.deleteStudentByQuery = deleteStudentByQuery;
+const deleteStudentByParams = (req, res) => {
+    let id = req.params.id;
+    let sql = `DELETE from students WHERE id="${id}"`;
+    db.all(sql, [], (error) => {
+        if (error) {
+            res.send(error.message);
+        }
+        res.send("Student Deleted");
+    });
+};
+exports.deleteStudentByParams = deleteStudentByParams;
