@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const professionalsController_1 = require("../controllers/professionalsController");
+const professionalsRouter = (0, express_1.Router)();
+professionalsRouter.get("/", professionalsController_1.professionalsRoot);
+professionalsRouter.get("/professionalsList", professionalsController_1.professionalsList);
+professionalsRouter.get("/professionalsListByYearAndRoom", professionalsController_1.professionalsListByYearAndRoom);
+professionalsRouter.get("/professionalDetails/", professionalsController_1.professionalDetailsByQuery);
+professionalsRouter.get("/professionalDetails/:id", professionalsController_1.professionalDetailsByParams);
+// professionalsRouter.post("/addprofessional", addprofessional);
+// professionalsRouter.put("/updateprofessional", updateprofessional);
+professionalsRouter.patch("/updateprofessionalBySpecificField", professionalsController_1.updateProfessionalBySpecificField);
+professionalsRouter.delete("/deleteprofessional", professionalsController_1.deleteProfessionalByQuery);
+professionalsRouter.delete("/deleteprofessional/:id", professionalsController_1.deleteProfessionalByParams);
+exports.default = professionalsRouter;

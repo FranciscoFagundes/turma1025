@@ -1,10 +1,21 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteStudentByParams = exports.deleteStudentByQuery = exports.updateStudentBySpecificField = exports.updateStudent = exports.addStudent = exports.studentDetailsByParams = exports.studentDetailsByQuery = exports.studentsListByYearAndRoom = exports.studentsList = exports.studentsRoot = void 0;
 const dbConfig_1 = require("../db/dbConfig");
+const logger_1 = __importDefault(require("../services/logger"));
 let db = (0, dbConfig_1.createDbConnection)();
-const studentsRoot = (req, res) => {
-    res.send("Página Inicial Students");
+const studentsRoot = (req, res, next) => {
+    // logger.fatal("fatal");
+    // logger.error("error");
+    // logger.warn("warn");
+    // logger.info("info");
+    // logger.debug("debug");
+    // logger.trace("trace");
+    res.sendStatus(201);
+    // res.send("Página Inicial Students");
 };
 exports.studentsRoot = studentsRoot;
 const studentsList = (req, res) => {
@@ -12,15 +23,18 @@ const studentsList = (req, res) => {
     let sql = `SELECT * FROM students`;
     db.all(sql, [], (error, rows) => {
         if (error) {
+            logger_1.default.error(error.message);
             res.send(error.message);
         }
         rows.forEach((row) => { studentsList.push(row); });
+        logger_1.default.info(req);
         res.send(studentsList);
     });
 };
 exports.studentsList = studentsList;
 const studentsListByYearAndRoom = (req, res) => {
     var _a;
+    logger_1.default.info(req);
     let studentsList = [];
     let year = req.query.year;
     let room = (_a = req.query.room) === null || _a === void 0 ? void 0 : _a.toString().toUpperCase();
@@ -40,6 +54,7 @@ const studentsListByYearAndRoom = (req, res) => {
 };
 exports.studentsListByYearAndRoom = studentsListByYearAndRoom;
 const studentDetailsByQuery = (req, res) => {
+    logger_1.default.info(req);
     let id = req.query.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
     db.all(sql, [], (error, rows) => {
@@ -56,6 +71,7 @@ const studentDetailsByQuery = (req, res) => {
 };
 exports.studentDetailsByQuery = studentDetailsByQuery;
 const studentDetailsByParams = (req, res) => {
+    logger_1.default.info(req);
     let id = req.params.id;
     let sql = `SELECT * FROM students WHERE id="${id}"`;
     db.all(sql, [], (error, rows) => {
@@ -72,23 +88,31 @@ const studentDetailsByParams = (req, res) => {
 };
 exports.studentDetailsByParams = studentDetailsByParams;
 const addStudent = (req, res) => {
-    let student = req.body;
-    let roomToUppercase = student.room.toUpperCase();
-    let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${roomToUppercase}")`;
-    if (student.name && student.shift && student.year && student.room) {
-        db.run(sql, (error) => {
-            if (error) {
-                res.end(error.message);
-            }
-            res.send(`Student ${student.name} Added`);
-        });
+    logger_1.default.info(req);
+    let token = req.headers.authorization;
+    if (token == "Bearer 12345") {
+        let student = req.body;
+        let roomToUppercase = student.room.toUpperCase();
+        let sql = `INSERT INTO students(name, shift, year, room) VALUES ("${student.name}", "${student.shift}", "${student.year}", "${roomToUppercase}")`;
+        if (student.name && student.shift && student.year && student.room) {
+            db.run(sql, (error) => {
+                if (error) {
+                    res.end(error.message);
+                }
+                res.send(`Student ${student.name} Added`);
+            });
+        }
+        else {
+            res.send("Erro na criação do estudante. Verifique se todos os campos foram preenchidos");
+        }
     }
     else {
-        res.send("Erro na criação do estudante. Verifique se todos os campos foram preenchidos");
+        res.sendStatus(403);
     }
 };
 exports.addStudent = addStudent;
 const updateStudent = (req, res) => {
+    logger_1.default.info(req);
     let student = req.body;
     let roomToUppercase = student.room.toUpperCase();
     let sql = `UPDATE students SET name="${student.name}", 
@@ -106,6 +130,7 @@ const updateStudent = (req, res) => {
 };
 exports.updateStudent = updateStudent;
 const updateStudentBySpecificField = (req, res) => {
+    logger_1.default.info(req);
     let student = req.body;
     let sql = `UPDATE students SET name="${student.name}"
                                    WHERE id="${student.id}"
@@ -119,6 +144,7 @@ const updateStudentBySpecificField = (req, res) => {
 };
 exports.updateStudentBySpecificField = updateStudentBySpecificField;
 const deleteStudentByQuery = (req, res) => {
+    logger_1.default.info(req);
     let id = req.query.id;
     let sql = `DELETE from students WHERE id="${id}"`;
     db.all(sql, [], (error) => {
@@ -130,6 +156,7 @@ const deleteStudentByQuery = (req, res) => {
 };
 exports.deleteStudentByQuery = deleteStudentByQuery;
 const deleteStudentByParams = (req, res) => {
+    logger_1.default.info(req);
     let id = req.params.id;
     let sql = `DELETE from students WHERE id="${id}"`;
     db.all(sql, [], (error) => {
